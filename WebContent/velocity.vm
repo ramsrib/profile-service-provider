@@ -1,0 +1,13 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head> <title> Velocity Page</title> </head>
+<body>
+<h5> Testing the velocity pages from struts</h5>
+
+#sform("action=LoginAction")
+#stextfield("label=Username", "name=name")
+#spassword("label=Password", "name=password")
+#ssubmit("value=Submit")
+#end
+</body>
+</html>

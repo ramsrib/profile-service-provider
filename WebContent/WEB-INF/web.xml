@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    id="WebApp_ID" version="3.0">
+    
+    <display-name>UserProfileService</display-name>
+
+    <filter>
+        <filter-name>SpringOpenEntityManagerInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>SpringOpenEntityManagerInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <filter>
+        <filter-name>struts2</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+        <init-param>
+            <param-name>actionPackages</param-name>
+            <param-value>chapterTwo</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>struts2</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>urlRewriteFilter</filter-name>
+        <filter-class>filter.UrlRewriteFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>urlRewriteFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>LogFilter</filter-name>
+        <filter-class>filter.LogFilter</filter-class>
+        <init-param>
+            <param-name>test-param</param-name>
+            <param-value>This parameter is for testing.</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>LogFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>TestServlet</servlet-name>
+        <servlet-class>TestServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TestServlet</servlet-name>
+        <url-pattern>/TestServlet*</url-pattern>
+    </servlet-mapping>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+        <listener>
+          <listener-class>
+            listener.QuartzSchedulerListener
+          </listener-class>
+        </listener>
+</web-app>

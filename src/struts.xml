@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <constant name="struts.enable.DynamicMethodInvocation" value="false" />
+
+    <constant name="struts.devMode" value="true" />
+    <constant name="struts.i18n.reload" value="true" />
+    <constant name="struts.configuration.xml.reload" value="true" />
+    <constant name="struts.serve.static" value="true" />
+    <constant name="struts.serve.static.browserCache" value="false" />
+
+    <constant name="struts.action.excludePattern" value="/TestServlet" />
+    <constant name="struts.custom.i18n.resources" value="global" />
+    <constant name="struts.action.extension" value="action,," />
+
+    <!-- <constant name="struts.objectFactory" value="org.apache.struts2.spring.StrutsSpringObjectFactory" /> -->
+
+
+    <package name="default" namespace="/" extends="struts-default">
+
+        <result-types>
+            <result-type name="customJSON" class="result.JSONResult" />
+        </result-types>
+
+        <interceptors>
+            <interceptor name="customInt" class="interceptor.CustomLoggerInterceptor" />
+            <interceptor name="auth" class="interceptor.AuthenticationInterceptor" />
+
+            <interceptor-stack name="customStack">
+                <interceptor-ref name="customInt"></interceptor-ref>
+                <interceptor-ref name="defaultStack">
+                    <param name="exception.logEnabled">true</param>
+                    <param name="exception.logLevel">ERROR</param>
+                </interceptor-ref>
+                <interceptor-ref name="timer"></interceptor-ref>
+                <interceptor-ref name="logger"></interceptor-ref>
+                <interceptor-ref name="servletConfig"></interceptor-ref>
+            </interceptor-stack>
+
+        </interceptors>
+
+        <default-interceptor-ref name="customStack"></default-interceptor-ref>
+
+        <global-results>
+            <result name="login">/login.jsp</result>
+            <result name="error">/error.jsp</result>
+        </global-results>
+
+        <global-exception-mappings>
+            <exception-mapping exception="java.lang.Exception" result="error" />
+        </global-exception-mappings>
+
+        <action name="test" class="TestAction">
+            <result name="success">/test.jsp</result>
+        </action>
+
+        <action name="index">
+            <result>index.jsp</result>
+        </action>
+
+        <action name="login">
+            <result>login.jsp</result>
+        </action>
+        <action name="Home">
+            <result>/home.jsp</result>
+        </action>
+
+        <action name="Menu">
+            <result>/menu/Menu.jsp</result>
+        </action>
+
+        <action name="RegisterAction" class="action.RegisterAction">
+            <result name="success">/login.jsp</result>
+            <result name="input">/register.jsp</result>
+        </action>
+
+        <action name="LoginAction" class="springManagedLoginAction">
+            <result name="success">/home.jsp</result>
+            <result name="input">/login.jsp</result>
+            <result name="error">/error.jsp</result>
+        </action>
+
+        <action name="ListUser" class="action.ListUserAction">
+            <interceptor-ref name="auth"></interceptor-ref>
+            <result name="success">/listuser.jsp</result>
+            <result name="input">/index.jsp</result>
+            <result name="error">/error.jsp</result>
+        </action>
+
+        <action name="AddProfileAction" class="action.AddProfileAction">
+            <result name="success">/home.jsp</result>
+            <result name="input">/createprofile.jsp</result>
+        </action>
+
+        <action name="ListProfile" class="action.ListProfile">
+            <result name="success">/listprofile.jsp</result>
+            <result name="input">/index.jsp</result>
+            <result name="error">/error.jsp</result>
+        </action>
+
+        <action name="Velocity">
+            <result type="velocity">/velocity.vm</result>
+        </action>
+
+        <action name="FreeMarker">
+            <result type="freemarker">/freemarker.ftl</result>
+        </action>
+
+        <action name="AjaxRetriveProfile" class="action.RetrieveProfile">
+            <!-- <result>/ajaxProfileBrowser.jsp</result> -->
+            <result type="customJSON">
+                <param name="classAlias">profile</param>
+            </result>
+        </action>
+
+        <action name="ajax">
+            <result>/ajaxProfileBrowser.jsp</result>
+        </action>
+
+        <action name="forwardServlet">
+            <result type="dispatcher">/forwardservlet.jsp</result>
+        </action>
+
+        <action name="ForwardToAnotherServlet" class="action.ForwardToAnotherServlet">
+            <result>/anotherServlet</result>
+        </action>
+
+        <action name="Google">
+            <result type="redirect">http://www.google.com/search?q=test</result>
+        </action>
+
+        <action name="GoogleSearch" class="action.GoogleSearch">
+            <result type="redirect">http://www.google.com/search?q=${param}</result>
+        </action>
+
+        <action name="GoogleSearch1" class="action.GoogleSearch">
+            <result type="redirect">
+                <param name="location">http://www.google.com/search?q=${param}</param>
+                <param name="parse">true</param>
+            </result>
+        </action>
+        
+        <action name="add"
+            class="action.ContactAction" method="add">
+            <result name="success" type="chain">contact</result>
+            <result name="input" type="chain">contact</result>
+        </action>
+ 
+        <action name="delete"
+            class="action.ContactAction" method="delete">
+            <result name="success" type="chain">contact</result>
+        </action>
+ 
+        <action name="contact"
+            class="action.ContactAction">
+            <result name="success">contact.jsp</result>
+        </action>
+
+
+    <action name="addlink" class="action.LinkAction" method="add">
+        <result name="success">shorty.jsp</result>
+    </action>
+    <action name="link" class="action.LinkAction" method="get">
+        <result name="success" type="redirect">${url}</result>
+        <result name="input">shorty.jsp</result>
+        <result name="detail">detail.jsp</result>
+    </action>
+
+    </package>
+
+    <include file="chapterTwo/chapterTwo.xml" />
+
+
+</struts>

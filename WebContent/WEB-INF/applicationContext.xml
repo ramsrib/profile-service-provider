@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+    <context:property-placeholder location="classpath:application.properties" />
+
+    <bean id="profileService" class="service.ProfileServiceJPAImpl" />
+    <bean id="userService" class="service.UserServiceJPAImpl" />
+    <bean id="springManagedLoginAction" class="action.LoginAction" scope="prototype">
+        <property name="userService" ref="userService" />
+    </bean>
+
+    <!-- This is for configuring the transactional behavior based on annotations. By default the txManager wired, should
+        have the bean name "transactionManager" but you can also specify custom a bean name with the transaction-manager parameter. -->
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <!-- This is the convenient way to set up an EntityManagerFactory and inject it into the DAO's afterwards. JNDI Lookup
+        can also be used here. By default configuration file in META-INF/persistence.xml is used. Parameters are located in application.properties
+        file. -->
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <!-- <property name="persistenceUnitName" value="mesirPU" /> -->
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="showSql" value="${jdbc.showSql}" />
+                <property name="databasePlatform" value="${jdbc.dialect}" />
+                <property name="generateDdl" value="${jdbc.generateDdl}" />
+            </bean>
+        </property>
+    </bean>
+
+    <!-- This class is a plain old JDBC Driver configuration and it's not an actual connection pool. Parameters are located
+        in application.properties file. -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${database.driver}" />
+        <property name="url" value="${database.url}" />
+        <property name="username" value="${database.username}" />
+        <property name="password" value="${database.password}" />
+    </bean>
+
+    <!-- This binds an entity manager from the specified entityManagerFactory to the thread for transactional data access. -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <!-- This class processes the PersistenceUnit/PersistenceContext annotations to inject the corresponding EntityManagerFactory/EntityManager -->
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+</beans>
